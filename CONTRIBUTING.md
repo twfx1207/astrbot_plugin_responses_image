@@ -71,10 +71,12 @@ python scripts/build_release.py
 
 The standard-library build script validates metadata, configuration, Python 3.10 syntax and local imports. It writes `dist/astrbot_plugin_responses_image-v1.0.0.zip` and a `.zip.sha256` checksum. The installation ZIP contains runtime modules, dependency declarations, metadata, configuration, README, development instructions and license. Tests, Git history, caches and user data are excluded. File order, permissions, timestamps and line endings are normalized for reproducible builds with the same Python/zlib toolchain.
 
+GitHub Actions also builds the installation package. After a successful `Check plugin` run, download the `plugin-installation-package` artifact from that run. The Ubuntu v4.29.4 job uploads the installation ZIP and SHA-256 file; the Windows and native-wakeup jobs still validate their own builds. Artifacts are retained for 30 days. Extract the Actions artifact wrapper and use the plugin ZIP inside it for installation or as a Release asset.
+
 Complete source, tests and build scripts remain in Git. Create a source archive with:
 
 ```sh
 git archive --format=zip --prefix=astrbot_plugin_responses_image/ --output=dist/astrbot_plugin_responses_image-source-v1.0.0.zip HEAD
 ```
 
-After review and merging the release branch, tag the exact release commit `v1.0.0` and attach the verified installation ZIP and checksum. Keep `repo` in `metadata.yaml` aligned with this repository. Building archives and running CI do not publish or tag a release automatically.
+After review and merging the release branch, wait for all CI jobs to pass. Tag that exact commit `v1.0.0`, download the artifact from its successful run, and attach its installation ZIP and checksum to the Release without rebuilding locally. Keep `repo` in `metadata.yaml` aligned with this repository. Building archives and running CI do not publish or tag a release automatically.

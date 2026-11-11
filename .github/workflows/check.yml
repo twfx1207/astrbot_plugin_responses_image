@@ -44,3 +44,14 @@ jobs:
         run: python -m pytest -q
       - name: Build installation archive
         run: python scripts/build_release.py
+      - name: Upload installation package
+        if: matrix.os == 'ubuntu-latest' && matrix.core == 'v4.29.4'
+        uses: actions/upload-artifact@v7
+        with:
+          name: plugin-installation-package
+          path: |
+            dist/astrbot_plugin_responses_image-v*.zip
+            dist/astrbot_plugin_responses_image-v*.zip.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
