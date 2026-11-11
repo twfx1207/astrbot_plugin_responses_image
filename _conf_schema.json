@@ -1,0 +1,79 @@
+{
+  "background_generation": {
+    "description": "后台绘图（主聊天不等待）",
+    "type": "bool",
+    "default": false,
+    "hint": "开启后立即返回排队回执，完成后唤醒主 Agent 看图并发送。需要平台支持主动发送。普通用户同一平台账号最多一个未领取任务（跨窗口检查），管理员不受此限制。同一窗口串行，其他窗口可并发。重启不恢复队列；已发出的请求不退款或自动重试。"
+  },
+  "sub_agents_enabled": {
+    "description": "启用生图子 Agent 分工",
+    "type": "bool",
+    "default": false,
+    "hint": "开启后，缺少角色参考时由设定收集 Agent 搜索、看图核对并整理外观摘要，再交给绘图 Agent。已建档角色或明确参考图会跳过收集。关闭时沿用单 worker 流程。两种模式都会把生成图片交回主 Agent 看图并发送；主模型需支持图片输入，并启用 send_message_to_user。"
+  },
+  "research_provider_id": {
+    "description": "设定收集 Agent 模型",
+    "type": "string",
+    "default": "",
+    "_special": "select_provider",
+    "hint": "仅开启子 Agent 分工且需要搜参考时生效。选择支持识图的 openai_responses 模型配置，留空沿用绘图模型。native 搜索还要求支持 web_search，不支持时可选 tavily。使用独立上下文，不接收聊天历史图片。"
+  },
+  "worker_provider_id": {
+    "description": "绘图 Agent／worker 模型",
+    "type": "string",
+    "default": "",
+    "_special": "select_provider",
+    "hint": "选择 AstrBot 通用模型配置，复用其地址和密钥。Responses 模式使用 openai_responses；Images API 模式还支持 openai_chat_completion。留空沿用当前聊天模型的连接。这里选择模型配置 ID；实际图片模型在下面填写。主聊天额外参数不要启用原生 image_generation，以免绕过插件流程。"
+  },
+  "generation_api": {
+    "description": "绘图接口",
+    "type": "string",
+    "default": "responses",
+    "options": [
+      "responses",
+      "images"
+    ],
+    "hint": "responses：通用模型调用 image_generation 工具，保持原有方式。images：直接调用纯图片模型；无参考图走 /images/generations，带参考图或编辑走 /images/edits，要求上游实现相应接口。纯图片模型不能负责搜索和看图核对，需要时请开启子 Agent 分工并指定独立的设定收集模型。失败不会自动切换接口或重试。"
+  },
+  "image_model": {
+    "description": "实际图片模型",
+    "type": "string",
+    "default": "",
+    "hint": "填写上游支持的图片模型 API 名称。Responses 模式写入 image_generation.model，不会覆盖外层通用模型；Images API 模式直接作为请求的 model。留空优先沿用 worker 的 image_generation.model；再留空时，Responses 由上游决定，Images API 使用 worker 自身的模型名。面板填写值优先，不会修改共享模型配置。"
+  },
+  "reference_search": {
+    "description": "角色参考图搜索方式",
+    "type": "string",
+    "default": "disabled",
+    "options": [
+      "disabled",
+      "native",
+      "tavily"
+    ],
+    "hint": "disabled：关闭搜索；native：使用收集模型的 Responses 原生 web_search，无需 Tavily 密钥；缺少图片结果时尝试从实际引用网页提取静态图片；tavily：复用当前会话 AstrBot 配置中的 Tavily 密钥。开启子 Agent 时由设定收集模型搜索和核对，否则使用 worker。仅未建档角色缺少明确参考图时触发，搜索关闭、获取失败或核对未通过时，新图清空自动参考后按角色名继续生成。明确编辑目标缺失时仍停止；搜索失败不自动重试。搜索及核对可能额外计费。"
+  },
+  "max_concurrent_jobs": {
+    "description": "后台绘图并发数",
+    "type": "int",
+    "default": 4,
+    "hint": "1–16，默认 4。包括参考收集和绘图；等待主 Agent 领取的结果不占并发，但仍占总容量。"
+  },
+  "max_queue_size": {
+    "description": "后台队列额外容量",
+    "type": "int",
+    "default": 20,
+    "hint": "0–200，默认 20；未结束任务总数上限为并发数加此值，包含等待领取的结果。管理员也遵守容量限制。"
+  },
+  "hourly_limit": {
+    "description": "每窗口每小时绘图限额",
+    "type": "int",
+    "default": 10,
+    "hint": "默认最近 1 小时最多 10 次，0 表示不限。普通用户排队时预留，实际发出图片接口请求时扣额；失败或超时也计数。管理员不计数。"
+  },
+  "daily_limit": {
+    "description": "每窗口每天绘图限额",
+    "type": "int",
+    "default": 30,
+    "hint": "默认最近 24 小时最多 30 次，0 表示不限。与每小时限额同时生效；管理员可用 /生图限额 单独覆盖窗口限额或 reset 已用额度。已用记录重启后保留。"
+  }
+}

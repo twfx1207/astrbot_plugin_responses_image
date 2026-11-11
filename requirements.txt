@@ -1,0 +1,7 @@
+# Runtime dependencies shared with the supported AstrBot host.
+aiofiles>=25.1.0
+aiohttp>=3.11.18
+mcp>=1.8.0,<2
+openai>=1.78.0
+Pillow>=11.2.1
+yarl>=1.17.0,<2
