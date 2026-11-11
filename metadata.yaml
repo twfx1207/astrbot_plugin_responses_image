@@ -5,7 +5,7 @@ desc: 复用通用模型连接，支持绘图队列、窗口限额、自然语�
 version: 1.0.0
 author: twfx1207
 repo: https://github.com/twfx1207/astrbot_plugin_responses_image
-astrbot_version: ">=4.29.4,<4.30"
+astrbot_version: ">=4.29.4,<5"
 support_platforms:
   - aiocqhttp
   - qq_official

@@ -15,7 +15,7 @@
 
 ## 安装与前提
 
-适用 AstrBot **`>=4.29.4,<4.30`**。运行依赖由 `requirements.txt` 声明，在插件安装时由 AstrBot 管理。
+安装版本范围为 AstrBot **`>=4.29.4,<5`**。当前回归覆盖正式 v4.29.4，以及包含原生 `wake_main_agent` 的固定 core 修订；后续 4.x 若调整内部接口，仍需验证与适配。运行依赖由 `requirements.txt` 声明，在插件安装时由 AstrBot 管理。
 
 1. 在插件管理中使用仓库地址 `https://github.com/twfx1207/astrbot_plugin_responses_image` 安装，重载插件或重启 AstrBot。也可上传构建的 `astrbot_plugin_responses_image-v1.0.0.zip`，或将仓库克隆到 `data/plugins/astrbot_plugin_responses_image/`。
 2. 主聊天模型须支持图片输入、工具调用，启用 `send_message_to_user`，并能接收工具返回的图片。
